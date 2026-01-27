@@ -1,5 +1,6 @@
 from assimulo.explicit_ode import Explicit_ODE
 from assimulo.ode import *
+from assimulo.problem import Explicit_Problem
 import numpy as np
 import scipy.linalg as SL
 
@@ -16,7 +17,7 @@ class BDF_4(Explicit_ODE):
 
     tol = 1e-10
     maxit = 20
-    maxsteps = 5000
+    maxsteps = 20000
     jac_eps = 1e-8
 
     def __init__(self, problem):
@@ -28,8 +29,9 @@ class BDF_4(Explicit_ODE):
         # Estadísticas
         self.statistics["nsteps"] = 0
         self.statistics["nfcns"] = 0
-        self.statistics["nnewton"] = 0
-        self.statistics["njacs"] = 0
+        # Custom counters (Statistics only allows predefined keys)
+        self.nnewton = 0
+        self.njacs = 0
 
     def _set_h(self, h):
         self.options["h"] = float(h)
@@ -55,12 +57,12 @@ class BDF_4(Explicit_ODE):
         # Intentar jac analítico si existe
         jac = getattr(self.problem, "jac", None)
         if callable(jac):
-            self.statistics["njacs"] += 1
+            self.njacs += 1
             return jac(t, y)
 
         # Jacobiano numérico por diferencias finitas centradas:
         # ∂fi/∂xj(x) ≈ (fi(x + h e_j) - fi(x - h e_j)) / (2h) :contentReference[oaicite:11]{index=11}
-        self.statistics["njacs"] += 1
+        self.njacs += 1
         y = np.asarray(y, dtype=float)
         n = y.size
         J = np.zeros((n, n), dtype=float)
@@ -154,14 +156,8 @@ class BDF_4(Explicit_ODE):
     # ---------------------------
     # Paso BDF4 + Newton
     # ---------------------------
+  
     def step_BDF4(self, T, Y, h):
-        """
-        BDF-4 con Newton:
-
-        Forma general implícita BDF: sum α u_{n+1-i} = h f(t_{n+1}, u_{n+1}) :contentReference[oaicite:14]{index=14}
-        Newton para resolver el sistema no lineal del paso :contentReference[oaicite:15]{index=15}
-        Predictor: u^(0) = u_n (pedido por el Project01) :contentReference[oaicite:16]{index=16}
-        """
         f = self._rhs
 
         t_n, t_nm1, t_nm2, t_nm3 = T
@@ -169,42 +165,34 @@ class BDF_4(Explicit_ODE):
 
         t_np1 = t_n + h
 
-        # Coeficientes estándar de BDF4 (paso constante):
-        # (25/12) u_{n+1} - 4 u_n + 3 u_{n-1} - (4/3) u_{n-2} + (1/4) u_{n-3} = h f(t_{n+1}, u_{n+1})
-        # Es un caso particular de la fórmula general BDF del apunte. :contentReference[oaicite:17]{index=17}
         a0 = 25.0 / 12.0
         a1 = -4.0
         a2 = 3.0
         a3 = -4.0 / 3.0
         a4 = 1.0 / 4.0
 
-        # Reordenamos para la función no lineal F(u)=0:
-        # F(u) = a0*u + a1*y_n + a2*y_nm1 + a3*y_nm2 + a4*y_nm3 - h f(t_np1, u)
-        # (Esto coincide con la forma del apunte: Fn+1(u)=αk u - hβk f(...) - función de valores viejos) :contentReference[oaicite:18]{index=18}
         old_part = a1 * y_n + a2 * y_nm1 + a3 * y_nm2 + a4 * y_nm3
 
-        # Predictor: usar y_n como u^(0) :contentReference[oaicite:19]{index=19}
+        # predictor (zero order): u^(0) = y_n
         u = y_n.copy()
 
         for it in range(self.maxit):
-            self.statistics["nnewton"] += 1
+            self.nnewton += 1
 
             Fu = a0 * u + old_part - h * f(t_np1, u)
 
-            # criterio simple (norma infinito)
+            # Convergencia por residual
             if SL.norm(Fu, ord=np.inf) < self.tol:
                 return t_np1, u
 
-            # Jacobiano de F:
-            # F'(u) = a0*I - h * ∂f/∂u(t_np1, u)  (exactamente como en el apunte) :contentReference[oaicite:20]{index=20}
+            # Jacobiano: F'(u) = a0 I - h Jf
             Jf = self._jacobian(t_np1, u)
             A = a0 * np.eye(u.size) - h * Jf
 
-            # Resolver el sistema lineal A Δu = -F(u) (paso Newton) :contentReference[oaicite:21]{index=21}
             du = SL.solve(A, -Fu)
-
             u_new = u + du
 
+            # Convergencia por incremento
             if SL.norm(du, ord=np.inf) < self.tol * (1.0 + SL.norm(u_new, ord=np.inf)):
                 return t_np1, u_new
 
@@ -212,14 +200,34 @@ class BDF_4(Explicit_ODE):
 
         raise Explicit_ODE_Exception(f'Newton could not converge within {self.maxit} iterations')
 
+
     def print_statistics(self, verbose=NORMAL):
         self.log_message('Final Run Statistics            : {name} \n'.format(name=self.problem.name), verbose)
         self.log_message(' Step-length                    : {stepsize} '.format(stepsize=self.options["h"]), verbose)
         self.log_message(' Number of Steps                : ' + str(self.statistics["nsteps"]), verbose)
         self.log_message(' Number of Function Evaluations : ' + str(self.statistics["nfcns"]), verbose)
-        self.log_message(' Number of Newton iterations    : ' + str(self.statistics["nnewton"]), verbose)
-        self.log_message(' Number of Jacobian builds      : ' + str(self.statistics["njacs"]), verbose)
+        self.log_message(' Number of Newton iterations    : ' + str(self.nnewton), verbose)
+        self.log_message(' Number of Jacobian builds      : ' + str(self.njacs), verbose)
 
         self.log_message('\nSolver options:\n', verbose)
         self.log_message(' Solver            : BDF4', verbose)
         self.log_message(' Solver type       : Fixed step + Newton\n', verbose)
+
+if __name__ == "__main__":
+    # Péndulo elástico (mismo modelo que en Task1)
+    def rhs(t, y):
+        y1, y2, y3, y4 = y
+        r = np.hypot(y1, y2)
+        lam = 0.0 if r == 0 else  (r - 1.0) / r # Por ahi falta multiplicar por k
+        return np.array([y3, y4, -y1 * lam, -y2 * lam - 1.0], float)
+
+    y0 = np.array([1.0, 0.0, 0.0, 0.0], float)
+    prob = Explicit_Problem(rhs, y0, name="Elastic pendulum")
+
+    sim = BDF_4(prob)
+    sim.h = 0.02        # paso preferido
+    sim.maxsteps = 15000
+    t, y = sim.simulate(10.0)  # tiempo final
+
+    sim.print_statistics()
+    sim.plot()
