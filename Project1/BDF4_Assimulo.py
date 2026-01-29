@@ -15,8 +15,8 @@ class BDF_4(Explicit_ODE):
     - Jacobiano numérico (si no hay jac analítico): diferencias finitas centradas :contentReference[oaicite:9]{index=9}
     """
 
-    tol = 1e-10
-    maxit = 20
+    tol = 1e-8
+    maxit = 50
     maxsteps = 20000
     jac_eps = 1e-8
 
@@ -73,7 +73,7 @@ class BDF_4(Explicit_ODE):
             ej[j] = 1.0
             fp = self._rhs(t, y + eps * ej)
             fm = self._rhs(t, y - eps * ej)
-            J[:, j] = (fp - fm) / (2.0 * eps)
+            J[:, j] = (fp - fm) / (2.0 * eps)       #calculo de la derivada por diferencias finitas
 
         return J
 
@@ -82,68 +82,46 @@ class BDF_4(Explicit_ODE):
     # ---------------------------
     def integrate(self, t, y, tf, opts):
         """
-        Integra desde (t,y) hasta tf con paso fijo h (recortando el último).
-        BDF-4 necesita 4 valores previos (u_n..u_{n-3}), así que arrancamos con
-        3 pasos de un método de un paso (Euler explícito) para obtenerlos. :contentReference[oaicite:12]{index=12}
+        Integra desde (t,y) hasta tf con paso fijo h.
+        BDF-4 necesita 3 pasos previos, así que los primeros 3 pasos usan Euler explícito.
         """
-        h = min(self.h, abs(tf - t))
+        h = self.options["h"]
+        h = min(h, abs(tf - t))
 
+        # Lists for storing the result
         tres = []
         yres = []
 
-        # Guardamos historia:
-        # y_n, y_{n-1}, y_{n-2}, y_{n-3}
-        y_n = np.asarray(y, dtype=float)
-        t_n = t
-
-        # Para inicializar u1,u2,u3 usamos 3 pasos de Euler explícito (starter).
-        # El apunte dice que un k-step necesita starting values y que se obtienen con métodos de 1 paso. :contentReference[oaicite:13]{index=13}
-        hist_y = [y_n.copy()]  # u0
-        hist_t = [t_n]
-
-        for _ in range(3):
-            if t_n >= tf:
-                break
-            self.statistics["nsteps"] += 1
-            t_np1, y_np1 = self.step_EE(t_n, y_n, h)
-            t_n, y_n = t_np1, y_np1
-            hist_t.append(t_n)
-            hist_y.append(y_n.copy())
-            tres.append(t_n)
-            yres.append(y_n.copy())
-            h = min(self.h, abs(tf - t_n))
-
-        if t_n >= tf:
-            return ID_PY_OK, tres, yres
-
-        # Ahora tenemos u0,u1,u2,u3 (si tf lo permitió)
-        # Ordenamos la historia para BDF4:
-        # y_n = u3, y_{n-1}=u2, y_{n-2}=u1, y_{n-3}=u0
-        y_n   = hist_y[-1]
-        y_nm1 = hist_y[-2]
-        y_nm2 = hist_y[-3]
-        y_nm3 = hist_y[-4]
-        t_n   = hist_t[-1]
-
         for i in range(self.maxsteps):
-            if t_n >= tf:
+            if t >= tf:
                 break
             self.statistics["nsteps"] += 1
 
-            t_np1, y_np1 = self.step_BDF4([t_n, t_n - h, t_n - 2*h, t_n - 3*h],
-                                          [y_n, y_nm1, y_nm2, y_nm3],
-                                          h)
+            if i == 0:  # first step
+                t_np1, y_np1 = self.step_EE(t, y, h)
+            elif i == 1:  # second step
+                t_np1, y_np1 = self.step_EE(t, y, h)
+            elif i == 2:  # third step
+                t_np1, y_np1 = self.step_EE(t, y, h)
+            else:  # from fourth step onwards, use BDF4
+                t_np1, y_np1 = self.step_BDF4([t, t_nm1, t_nm2, t_nm3],
+                                              [y, y_nm1, y_nm2, y_nm3],
+                                              h)
+            
+            # Shift history (like BDF2 does: t,t_nm1=t_np1,t)
+            if i >= 2:
+                t_nm3, y_nm3 = t_nm2, y_nm2
+            if i >= 1:
+                t_nm2, y_nm2 = t_nm1, y_nm1
+            t_nm1, y_nm1 = t, y
+            t, y = t_np1, y_np1
 
-            # Shift de historia
-            y_nm3, y_nm2, y_nm1, y_n = y_nm2, y_nm1, y_n, y_np1
-            t_n = t_np1
+            tres.append(t)
+            yres.append(y.copy())
 
-            tres.append(t_n)
-            yres.append(y_n.copy())
-
-            h = min(self.h, abs(tf - t_n))
+            h = min(self.h, np.abs(tf - t))
         else:
-            raise Explicit_ODE_Exception('Final time not reached within maximum number of steps')
+            raise Exception('Final time not reached within maximum number of steps')
 
         return ID_PY_OK, tres, yres
 
@@ -160,8 +138,8 @@ class BDF_4(Explicit_ODE):
     def step_BDF4(self, T, Y, h):
         f = self._rhs
 
-        t_n, t_nm1, t_nm2, t_nm3 = T
-        y_n, y_nm1, y_nm2, y_nm3 = Y
+        t_n, t_nm1, t_nm2, t_nm3 = T        #timepos previos
+        y_n, y_nm1, y_nm2, y_nm3 = Y        #estados previos
 
         t_np1 = t_n + h
 
@@ -179,7 +157,7 @@ class BDF_4(Explicit_ODE):
         for it in range(self.maxit):
             self.nnewton += 1
 
-            Fu = a0 * u + old_part - h * f(t_np1, u)
+            Fu = a0 * u + old_part - h * f(t_np1, u)        #error 
 
             # Convergencia por residual
             if SL.norm(Fu, ord=np.inf) < self.tol:
@@ -198,7 +176,7 @@ class BDF_4(Explicit_ODE):
 
             u = u_new
 
-        raise Explicit_ODE_Exception(f'Newton could not converge within {self.maxit} iterations')
+        raise Exception(f'Newton could not converge within {self.maxit} iterations')
 
 
     def print_statistics(self, verbose=NORMAL):
