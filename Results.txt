@@ -1,0 +1,311 @@
+==== Elastic Pendulum: Task 1 Test Suite ====
+
+Final Run Statistics: Elastic pendulum (k=1.0) 
+
+ Number of steps                                 : 6
+ Number of function evaluations                  : 9
+ Number of Jacobian evaluations                  : 1
+ Number of function eval. due to Jacobian eval.  : 4
+ Number of error test failures                   : 0
+ Number of nonlinear iterations                  : 6
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 50.0 seconds.
+Elapsed simulation time: 0.0009146248921751976 seconds.
+[1] Equilibrium test (k=1):
+    max deviation ||y - y_eq|| = 0.0
+    y_eq = [ 0. -2.  0.  0.]
+Final Run Statistics: Elastic pendulum (k=1.0) 
+
+ Number of steps                                 : 2447
+ Number of function evaluations                  : 2659
+ Number of Jacobian evaluations                  : 42
+ Number of function eval. due to Jacobian eval.  : 168
+ Number of error test failures                   : 27
+ Number of nonlinear iterations                  : 2656
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 100.0 seconds.
+Elapsed simulation time: 0.0109672078397125 seconds.
+
+[2] Energy drift test (k=1):
+    relative drift = 3.6445452714639615e-06
+    E0/Emin/Emax = -0.9930339887498948 -0.9930376332951663 -0.9930339887498948
+Final Run Statistics: Elastic pendulum (k=5.0) 
+
+ Number of steps                                 : 2186
+ Number of function evaluations                  : 2378
+ Number of Jacobian evaluations                  : 37
+ Number of function eval. due to Jacobian eval.  : 148
+ Number of error test failures                   : 24
+ Number of nonlinear iterations                  : 2375
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 50.0 seconds.
+Elapsed simulation time: 0.005733791971579194 seconds.
+Final Run Statistics: Elastic pendulum (k=5.0) 
+
+ Number of steps                                 : 2165
+ Number of function evaluations                  : 2357
+ Number of Jacobian evaluations                  : 36
+ Number of function eval. due to Jacobian eval.  : 144
+ Number of error test failures                   : 24
+ Number of nonlinear iterations                  : 2354
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 50.0 seconds.
+Elapsed simulation time: 0.006531875114887953 seconds.
+
+[3] Symmetry (mirror) test (k=5):
+    max |y1A + y1B| = 1.9227929709542124e-07
+    max |y2A - y2B| = 1.1374715236378563e-07
+    max |y3A + y3B| = 1.59770124866232e-07
+    max |y4A - y4B| = 2.216186900105832e-07
+Final Run Statistics: Elastic pendulum (k=1.0) 
+
+ Number of steps                                 : 2689
+ Number of function evaluations                  : 2845
+ Number of Jacobian evaluations                  : 45
+ Number of function eval. due to Jacobian eval.  : 180
+ Number of error test failures                   : 15
+ Number of nonlinear iterations                  : 2842
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-12
+ Tolerances (relative)    : 1e-10
+
+Simulation interval    : 0.0 - 50.0 seconds.
+Elapsed simulation time: 0.006835500011220574 seconds.
+Final Run Statistics: Elastic pendulum (k=1.0) 
+
+ Number of steps                                 : 574
+ Number of function evaluations                  : 653
+ Number of Jacobian evaluations                  : 10
+ Number of function eval. due to Jacobian eval.  : 40
+ Number of error test failures                   : 12
+ Number of nonlinear iterations                  : 650
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-08
+ Tolerances (relative)    : 1e-06
+
+Simulation interval    : 0.0 - 50.0 seconds.
+Elapsed simulation time: 0.0022269580513238907 seconds.
+Final Run Statistics: Elastic pendulum (k=1.0) 
+
+ Number of steps                                 : 1239
+ Number of function evaluations                  : 1350
+ Number of Jacobian evaluations                  : 21
+ Number of function eval. due to Jacobian eval.  : 84
+ Number of error test failures                   : 11
+ Number of nonlinear iterations                  : 1347
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 50.0 seconds.
+Elapsed simulation time: 0.0031262501142919064 seconds.
+
+[4] Tolerance convergence (k=1, ref rtol=1e-10 atol=1e-12):
+    rtol=1e-06, atol=1e-08 -> final_inf_err=1.389e-04, max_traj_err=1.944e-04
+    rtol=1e-08, atol=1e-10 -> final_inf_err=2.300e-06, max_traj_err=3.194e-06
+Final Run Statistics: Elastic pendulum (k=1) 
+
+ Number of steps                                 : 763
+ Number of function evaluations                  : 824
+ Number of Jacobian evaluations                  : 14
+ Number of function eval. due to Jacobian eval.  : 56
+ Number of error test failures                   : 4
+ Number of nonlinear iterations                  : 821
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 30.0 seconds.
+Elapsed simulation time: 0.0027120420709252357 seconds.
+Final Run Statistics: Elastic pendulum (k=10) 
+
+ Number of steps                                 : 1710
+ Number of function evaluations                  : 1852
+ Number of Jacobian evaluations                  : 29
+ Number of function eval. due to Jacobian eval.  : 116
+ Number of error test failures                   : 16
+ Number of nonlinear iterations                  : 1849
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 30.0 seconds.
+Elapsed simulation time: 0.006375249940901995 seconds.
+Final Run Statistics: Elastic pendulum (k=100) 
+
+ Number of steps                                 : 5729
+ Number of function evaluations                  : 6279
+ Number of Jacobian evaluations                  : 96
+ Number of function eval. due to Jacobian eval.  : 384
+ Number of error test failures                   : 64
+ Number of nonlinear iterations                  : 6276
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 30.0 seconds.
+Elapsed simulation time: 0.02097941585816443 seconds.
+Final Run Statistics: Elastic pendulum (k=1000) 
+
+ Number of steps                                 : 17944
+ Number of function evaluations                  : 19982
+ Number of Jacobian evaluations                  : 302
+ Number of function eval. due to Jacobian eval.  : 1208
+ Number of error test failures                   : 306
+ Number of nonlinear iterations                  : 19979
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 30.0 seconds.
+Elapsed simulation time: 0.049214500002563 seconds.
+
+[5] k-sweep summary (same IC):
+    k=   1: r in [1.0106, 2.9954], energy drift=9.499e-07
+    k=  10: r in [1.0478, 1.1623], energy drift=1.772e-07
+    k= 100: r in [0.8999, 1.1211], energy drift=3.680e-05
+    k=1000: r in [0.8838, 1.1183], energy drift=2.488e-04
+
+==== Done ====
+
+Number of steps                                 : 3010
+ Number of function evaluations                  : 3355
+ Number of Jacobian evaluations                  : 51
+ Number of function eval. due to Jacobian eval.  : 204
+ Number of error test failures                   : 52
+ Number of nonlinear iterations                  : 3352
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 100.0 seconds.
+Elapsed simulation time: 0.00534195895306766 seconds.
+
+Number of steps                                 : 241766
+ Number of function evaluations                  : 297553
+ Number of Jacobian evaluations                  : 4109
+ Number of function eval. due to Jacobian eval.  : 16436
+ Number of error test failures                   : 11532
+ Number of nonlinear iterations                  : 297550
+ Number of nonlinear convergence failures        : 0
+
+Solver options:
+
+ Solver                   : CVode
+ Linear multistep method  : BDF
+ Nonlinear solver         : Newton
+ Linear solver type       : DENSE
+ Maximal order            : 5
+ Tolerances (absolute)    : 1e-10
+ Tolerances (relative)    : 1e-08
+
+Simulation interval    : 0.0 - 100.0 seconds.
+Elapsed simulation time: 0.41664649988524616 seconds.
