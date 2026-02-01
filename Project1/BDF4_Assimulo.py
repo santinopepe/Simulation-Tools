@@ -17,7 +17,7 @@ class BDF_4(Explicit_ODE):
 
     tol = 1e-8
     maxit = 50
-    maxsteps = 20000
+    maxsteps = 50000
     jac_eps = 1e-8
 
     def __init__(self, problem):
