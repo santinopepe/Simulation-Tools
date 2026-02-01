@@ -192,18 +192,18 @@ class BDF_4(Explicit_ODE):
         self.log_message(' Solver type       : Fixed step + Newton\n', verbose)
 
 if __name__ == "__main__":
-    # Péndulo elástico (mismo modelo que en Task1)
     def rhs(t, y):
         y1, y2, y3, y4 = y
         r = np.hypot(y1, y2)
-        lam = 0.0 if r == 0 else  (r - 1.0) / r # Por ahi falta multiplicar por k
+        k = 1.0  # Stiffness parameter
+        lam = 0.0 if r == 0 else k * (r - 1.0) / r
         return np.array([y3, y4, -y1 * lam, -y2 * lam - 1.0], float)
 
-    y0 = np.array([1.0, 0.0, 0.0, 0.0], float)
-    prob = Explicit_Problem(rhs, y0, name="Elastic pendulum")
+    y0 = np.array([1.0, 1.0, 0.0, 0.0], float)
+    prob = Explicit_Problem(rhs, y0, name="Elastic pendulum (k=1)")
 
     sim = BDF_4(prob)
-    sim.h = 0.02        # paso preferido
+    sim.h = 0.01        # paso 
     sim.maxsteps = 15000
     t, y = sim.simulate(10.0)  # tiempo final
 
