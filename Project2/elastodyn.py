@@ -5,6 +5,13 @@ originally based on : https://comet-fenics.readthedocs.io/en/latest/demo/elastod
 """
 
 import os
+# configure writable cache locations to avoid permission issues
+base_cache = os.path.join(os.getcwd(), ".cache")
+os.makedirs(base_cache, exist_ok=True)
+os.environ.setdefault("XDG_CACHE_HOME", base_cache)
+os.environ.setdefault("DUNE_PY_DIR", base_cache)
+os.environ.setdefault("MPLCONFIGDIR", os.path.join(base_cache, "matplotlib"))
+
 # ensure some compilation output for this example
 os.environ['DUNE_LOG_LEVEL'] = 'info'
 print("Using DUNE_LOG_LEVEL=",os.getenv('DUNE_LOG_LEVEL'))
